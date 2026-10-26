@@ -1,0 +1,98 @@
+
+/* Unified recipe design — exact Udka Agnieszki component proportions */
+body.recipe-page{--recipe-ink:#152a42;--recipe-accent:#f43d77}
+body.recipe-page section.recipe-view.family-recipe{
+ width:calc(100% - 48px)!important;max-width:1320px!important;
+ padding:0!important;margin:42px auto 88px!important;box-sizing:border-box!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-hero{
+ display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+ gap:32px!important;align-items:center!important;margin:20px 0 30px!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-hero h1{
+ font-family:Georgia,serif!important;font-size:clamp(36px,4vw,62px)!important;
+ font-weight:700!important;line-height:1.12!important;color:var(--recipe-ink)!important;margin:14px 0!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-hero img{
+ width:100%!important;aspect-ratio:1.65!important;object-fit:cover!important;border-radius:20px!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-cols{
+ display:grid!important;grid-template-columns:minmax(270px,.75fr) minmax(0,1.25fr)!important;
+ gap:24px!important;align-items:start!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-panel{
+ min-width:0!important;box-sizing:border-box!important;
+ border:1px solid #f3dce5!important;border-radius:20px!important;
+ padding:24px!important;background:#fff!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-panel h2{
+ font-family:Georgia,serif!important;font-size:clamp(27px,3vw,38px)!important;
+ line-height:1.2!important;color:#112c48!important;margin:0 0 18px!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-check{
+ display:flex!important;align-items:flex-start!important;gap:10px!important;
+ margin:10px 0!important;padding:0!important;border:0!important;
+ background:transparent!important;font-size:inherit!important;cursor:pointer!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-check input{
+ flex:none!important;accent-color:#f23c76!important;margin:5px 0 0!important;
+ width:14px!important;height:14px!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-check:has(input:checked) span{
+ text-decoration:line-through!important;opacity:.55!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-steps{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:16px!important;align-items:stretch!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-step{
+ display:block!important;min-width:0!important;height:auto!important;
+ border:1px solid #f3dce5!important;border-radius:16px!important;
+ background:#fff!important;overflow:hidden!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-step>img{
+ display:block!important;width:100%!important;height:auto!important;
+ aspect-ratio:1.78!important;object-fit:cover!important;
+ border-radius:0!important;min-height:0!important;max-height:none!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-step .family-step-body{
+ display:block!important;width:auto!important;min-width:0!important;padding:14px 16px 17px!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-step h3{
+ font-family:Georgia,serif!important;font-size:21px!important;line-height:1.3!important;
+ font-weight:700!important;color:#152a42!important;margin:0 0 9px!important;
+ overflow-wrap:break-word!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-step p{
+ font-size:16px!important;line-height:1.65!important;margin:0!important;
+ color:#45576d!important;overflow-wrap:break-word!important;
+}
+body.recipe-page section.recipe-view.family-recipe .family-nav a{
+ background:#f43d79!important;color:#fff!important;border-radius:999px!important;
+ padding:12px 18px!important;text-decoration:none!important;font-weight:700!important;
+}
+@media(max-width:760px){
+ body.recipe-page section.recipe-view.family-recipe{width:calc(100% - 32px)!important;margin:20px auto 55px!important}
+ body.recipe-page section.recipe-view.family-recipe .family-hero,
+ body.recipe-page section.recipe-view.family-recipe .family-cols,
+ body.recipe-page section.recipe-view.family-recipe .family-steps{
+  grid-template-columns:minmax(0,1fr)!important;gap:18px!important;
+ }
+ body.recipe-page section.recipe-view.family-recipe .family-panel{padding:18px!important}
+}
+
+/* v7.8 — one step numbering source, no second counter or step checkbox */
+body.recipe-page .recipe-view.family-recipe .family-step .step-number,
+body.recipe-page .recipe-view.family-recipe .family-step h3::before,
+body.recipe-page .recipe-view.family-recipe .family-step h3::after,
+body.recipe-page .recipe-view.family-recipe .family-step::before {
+  content:none!important;display:none!important;
+}
+body.recipe-page .recipe-view.family-recipe .family-step .recipe-step-index {
+  display:inline!important;color:#f43d77!important;font:inherit!important;
+  font-weight:700!important;margin-right:5px!important;
+}
+body.recipe-page .recipe-view.family-recipe .family-step .family-check,
+body.recipe-page .recipe-view.family-recipe .family-step input[type=checkbox]{
+  display:none!important;
+}
