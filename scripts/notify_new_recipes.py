@@ -172,8 +172,8 @@ def main() -> int:
     if not (smtp_user and smtp_password and recipients_secret):
         print(
             "One-time configuration is required: set repository Actions secrets "
-            "NASZA_KUCHNIA_SMTP_USER, NASZA_KUCHNIA_SMTP_APP_PASSWORD, "
-            "and NASZA_KUCHNIA_NOTIFY_TO. No emails were sent.",
+            "NASZA_KUCHNIA_SMTP_APP_PASSWORD and NASZA_KUCHNIA_NOTIFY_TO. "
+            "The sender address is configured in the GitHub Actions workflow. No emails were sent.",
             file=sys.stderr,
         )
         return 1

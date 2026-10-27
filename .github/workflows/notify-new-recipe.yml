@@ -25,7 +25,7 @@ jobs:
         env:
           PREVIOUS_COMMIT_SHA: ${{ github.event.before }}
           CURRENT_COMMIT_SHA: ${{ github.sha }}
-          NASZA_KUCHNIA_SMTP_USER: ${{ secrets.NASZA_KUCHNIA_SMTP_USER }}
+          NASZA_KUCHNIA_SMTP_USER: naszakuchnia.am@gmail.com
           NASZA_KUCHNIA_SMTP_APP_PASSWORD: ${{ secrets.NASZA_KUCHNIA_SMTP_APP_PASSWORD }}
           NASZA_KUCHNIA_NOTIFY_TO: ${{ secrets.NASZA_KUCHNIA_NOTIFY_TO }}
         run: python3 scripts/notify_new_recipes.py
