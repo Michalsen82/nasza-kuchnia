@@ -1,0 +1,31 @@
+name: "Nasza Kuchnia — e-mail o nowym przepisie"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '*.html'
+
+permissions:
+  contents: read
+
+jobs:
+  email_notification:
+    name: E-mail po opublikowaniu nowego przepisu
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Pobierz repozytorium z historią
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sprawdź nowe przepisy, publikację i wyślij powiadomienie
+        env:
+          PREVIOUS_COMMIT_SHA: ${{ github.event.before }}
+          CURRENT_COMMIT_SHA: ${{ github.sha }}
+          NASZA_KUCHNIA_SMTP_USER: ${{ secrets.NASZA_KUCHNIA_SMTP_USER }}
+          NASZA_KUCHNIA_SMTP_APP_PASSWORD: ${{ secrets.NASZA_KUCHNIA_SMTP_APP_PASSWORD }}
+          NASZA_KUCHNIA_NOTIFY_TO: ${{ secrets.NASZA_KUCHNIA_NOTIFY_TO }}
+        run: python3 scripts/notify_new_recipes.py
