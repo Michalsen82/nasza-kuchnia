@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - '*.html'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -28,4 +29,5 @@ jobs:
           NASZA_KUCHNIA_SMTP_USER: naszakuchnia.am@gmail.com
           NASZA_KUCHNIA_SMTP_APP_PASSWORD: ${{ secrets.NASZA_KUCHNIA_SMTP_APP_PASSWORD }}
           NASZA_KUCHNIA_NOTIFY_TO: ${{ secrets.NASZA_KUCHNIA_NOTIFY_TO }}
+          NOTIFICATION_TEST_MODE: ${{ github.event_name == 'workflow_dispatch' }}
         run: python3 scripts/notify_new_recipes.py

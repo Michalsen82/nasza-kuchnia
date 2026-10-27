@@ -107,20 +107,41 @@ def wait_for_publication(url: str, title: str) -> bool:
     return False
 
 
-def make_email(title: str, url: str, smtp_user: str, recipient: str) -> EmailMessage:
+def make_email(title: str, url: str, smtp_user: str, recipient: str, *, test_mode: bool = False) -> EmailMessage:
     safe_title = html.escape(title, quote=True)
+    banner = "TEST POWIADOMIENIA" if test_mode else "NOWY PRZEPIS W NASZEJ KUCHNI"
+    opening = (
+        "To wiadomość testowa automatycznych powiadomień Naszej Kuchni."
+        if test_mode else "Do naszej wspólnej książki kucharskiej dołączył właśnie nowy przepis!"
+    )
+    intro = (
+        "Sprawdzamy działanie poczty. Przycisk prowadzi do przepisu, który już jest na stronie."
+        if test_mode else "Zapraszamy do odkrycia kolejnego domowego smaku. Składniki, wskazówki i przygotowanie krok po kroku czekają już na naszej stronie."
+    )
     safe_url = html.escape(url, quote=True)
     msg = EmailMessage()
-    msg["Subject"] = f"Nowość w Naszej Kuchni: {title} ♥"
+    msg["Subject"] = (
+        "TEST powiadomień — Nasza Kuchnia ♥"
+        if test_mode else f"Nowość w Naszej Kuchni: {title} ♥"
+    )
     msg["From"] = formataddr(("Nasza Kuchnia | Agnieszka i Michał", smtp_user))
     msg["To"] = recipient
-    msg.set_content(
-        "Nowy przepis w Naszej Kuchni!\n\n"
-        f"Dzisiaj do naszej kolekcji dołączył przepis: {title}.\n\n"
-        "Zajrzyj do naszej kuchni i sprawdź, jak go przygotować:\n"
-        f"{url}\n\n"
-        "Smacznego!\nAgnieszka i Michał ♥\n"
-    )
+    if test_mode:
+        msg.set_content(
+            "To wiadomość testowa automatycznych powiadomień Naszej Kuchni.\n\n"
+            f"Sprawdzamy wysyłkę z linkiem do istniejącego przepisu: {title}.\n"
+            f"{url}\n\n"
+            "Jeśli wiadomość dotarła, adres nadawcy i połączenie SMTP działają.\n"
+            "Agnieszka i Michał ♥\n"
+        )
+    else:
+        msg.set_content(
+            "Nowy przepis w Naszej Kuchni!\n\n"
+            f"Dzisiaj do naszej kolekcji dołączył przepis: {title}.\n\n"
+            "Zajrzyj do naszej kuchni i sprawdź, jak go przygotować:\n"
+            f"{url}\n\n"
+            "Smacznego!\nAgnieszka i Michał ♥\n"
+        )
     msg.add_alternative(
         f'''<!doctype html>
 <html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -131,11 +152,11 @@ def make_email(title: str, url: str, smtp_user: str, recipient: str) -> EmailMes
 <div style="font-family:Georgia,serif;font-size:28px;font-weight:bold;color:#102b46">Agnieszka<span style="color:#f43d77">♥</span>Michał</div>
 <div style="font-size:10px;letter-spacing:4px;font-weight:bold;color:#52657b;margin-top:6px">NASZA KUCHNIA</div>
 </td></tr>
-<tr><td style="background:#fff1f6;text-align:center;padding:12px 24px;color:#e73871;font-weight:bold;font-size:12px;letter-spacing:2px">NOWY PRZEPIS W NASZEJ KUCHNI</td></tr>
+<tr><td style="background:#fff1f6;text-align:center;padding:12px 24px;color:#e73871;font-weight:bold;font-size:12px;letter-spacing:2px">{banner}</td></tr>
 <tr><td align="center" style="padding:35px 30px 40px">
-<div style="font-size:17px;line-height:1.7;color:#546881">Do naszej wspólnej książki kucharskiej dołączył właśnie nowy przepis!</div>
+<div style="font-size:17px;line-height:1.7;color:#546881">{opening}</div>
 <h1 style="font-family:Georgia,serif;font-weight:bold;color:#102b46;font-size:31px;line-height:1.2;margin:18px 0 14px">{safe_title}</h1>
-<p style="font-size:15px;line-height:1.8;color:#546881;margin:0 0 32px">Zapraszamy do odkrycia kolejnego domowego smaku. Składniki, wskazówki i przygotowanie krok po kroku czekają już na naszej stronie.</p>
+<p style="font-size:15px;line-height:1.8;color:#546881;margin:0 0 32px">{intro}</p>
 <a href="{safe_url}" style="background:#f43d77;color:#fff;text-decoration:none;font-size:15px;font-weight:bold;border-radius:999px;padding:17px 32px;display:inline-block">ZOBACZ PRZEPIS →</a>
 <p style="font-size:14px;line-height:1.7;color:#6d7c8d;margin:34px 0 0">Smacznego!<br><strong style="color:#102b46">Agnieszka ♥ Michał</strong></p>
 </td></tr>
@@ -155,17 +176,29 @@ def recipients_from_secret(value: str) -> list[str]:
 
 
 def main() -> int:
-    before = os.environ.get("PREVIOUS_COMMIT_SHA", "")
-    after = os.environ.get("CURRENT_COMMIT_SHA", "")
-    try:
-        added_files = discover_added_recipe_files(before, after)
-    except (ValueError, subprocess.CalledProcessError) as exc:
-        print(f"Could not inspect added files: {exc}", file=sys.stderr)
-        return 1
-    recipes = [(p, title) for p in added_files if (title := title_of_recipe(p))]
-    if not recipes:
-        print("No new recipe pages in this push. No emails sent.")
-        return 0
+    test_mode = os.environ.get("NOTIFICATION_TEST_MODE", "").strip().lower() == "true"
+    if test_mode:
+        # The manual Actions button sends one clearly marked test.
+        # It never creates a recipe or triggers notifications for old content.
+        example = Path("pulpety-w-sosie-wlasnym.html")
+        title = title_of_recipe(example)
+        if not title:
+            print("Test recipe missing or invalid; no email sent.", file=sys.stderr)
+            return 1
+        recipes = [(example, title)]
+        print("Running one explicit test to configured recipients.")
+    else:
+        before = os.environ.get("PREVIOUS_COMMIT_SHA", "")
+        after = os.environ.get("CURRENT_COMMIT_SHA", "")
+        try:
+            added_files = discover_added_recipe_files(before, after)
+        except (ValueError, subprocess.CalledProcessError) as exc:
+            print(f"Could not inspect added files: {exc}", file=sys.stderr)
+            return 1
+        recipes = [(p, title) for p in added_files if (title := title_of_recipe(p))]
+        if not recipes:
+            print("No new recipe pages in this push. No emails sent.")
+            return 0
     smtp_user = os.environ.get("NASZA_KUCHNIA_SMTP_USER", "").strip()
     smtp_password = os.environ.get("NASZA_KUCHNIA_SMTP_APP_PASSWORD", "").strip()
     recipients_secret = os.environ.get("NASZA_KUCHNIA_NOTIFY_TO", "")
@@ -188,7 +221,10 @@ def main() -> int:
         if not wait_for_publication(url, title):
             print(f"Recipe did not become public; no email sent: {url}", file=sys.stderr)
             return 1
-        messages = [make_email(title, url, smtp_user, recipient) for recipient in recipients]
+        messages = [
+            make_email(title, url, smtp_user, recipient, test_mode=test_mode)
+            for recipient in recipients
+        ]
         # Encrypt transport and send distinct messages so addresses are not exposed to each other.
         with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=30) as client:
             client.login(smtp_user, smtp_password)
