@@ -7,7 +7,8 @@ permissions:
   contents: read
 jobs:
   send:
-    if: github.event_name == 'push' && github.event.head_commit.message == 'Jednorazowa wysyłka: nowe Menu weekendowe'
+    if: >-
+      github.event_name == 'push' && github.event.head_commit.message == 'Jednorazowa wysyłka: nowe Menu weekendowe'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
