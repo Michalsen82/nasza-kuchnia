@@ -35,9 +35,9 @@ jobs:
           vm.createContext(context);
           vm.runInContext(fs.readFileSync('weekend-catalog.js', 'utf8'),context);
           vm.runInContext(fs.readFileSync('weekend-planner.js', 'utf8'),context);
-          assert.ok(window.NKWeekendRecipes.length >= 14, 'Missing new carbonara recipe');
-          assert.ok(window.NKWeekendRecipes.reduce((n,x)=>n+x.ingredients.length,0) >= 138, 'Missing ingredients');
-          for (const id of ['golabki-pani-gosi','makaron-z-pesto','zeberka-w-miodzie','spaghetti-carbonara']) {
+          assert.ok(window.NKWeekendRecipes.length >= 15, 'Missing new carbonara recipe');
+          assert.ok(window.NKWeekendRecipes.reduce((n,x)=>n+x.ingredients.length,0) >= 154, 'Missing ingredients');
+          for (const id of ['golabki-pani-gosi','makaron-z-pesto','zeberka-w-miodzie','spaghetti-carbonara','schabowy-z-duszonymi-pieczarkami']) {
             assert.ok(window.NKWeekendRecipes.some(r=>r.id===id));
           }
           for (const [date,expected] of [
@@ -107,7 +107,7 @@ jobs:
           python3 <<'PY'
           from pathlib import Path
           pages=[p for p in Path('.').glob('*.html') if p.name not in ('menu-weekendowe.html','weekend-menu.html')]
-          assert len(pages)>=15, f'Expected at least 15 pages, got {len(pages)}'
+          assert len(pages)>=16, f'Expected at least 16 pages, got {len(pages)}'
           for file in pages:
               s=file.read_text('utf8')
               assert '<a href="menu-weekendowe.html">Menu weekendowe</a>' in s, file
@@ -145,5 +145,14 @@ jobs:
           homepage=Path('index.html').read_text('utf8')
           assert 'href="spaghetti-carbonara.html"' in homepage
           assert 'featured-spaghetti-carbonara' in homepage
-          print(f'Wszystkie {len(pages)} stron zintegrowane, nowa carbonara OK.')
+          new=Path('schabowy-z-duszonymi-pieczarkami.html').read_text('utf8')
+          assert 'id="schabowy-z-duszonymi-pieczarkami"' in new
+          assert new.count('class="family-step"')==8
+          assert new.count('class="family-check"')==16
+          assert 'href="schabowy-z-duszonymi-pieczarkami.html"' in homepage
+          assert 'featured-schabowy-z-duszonymi-pieczarkami' in homepage
+          assert 'src="schabowy-z-pieczarkami-glowne.webp"' in new
+          assert 'src="schabowy-z-pieczarkami-glowne.webp"' in homepage
+          assert Path('schabowy-z-pieczarkami-glowne.webp').is_file(), 'Missing generated food photograph'
+          print(f'Wszystkie {len(pages)} stron zintegrowane, schabowy z duszonymi pieczarkami OK.')
           PY

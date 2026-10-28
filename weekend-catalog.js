@@ -1,4 +1,4 @@
-/* Przepisy i składniki odczytane z zatwierdzonych podstron Naszej Kuchni. */
+/* Receptury i składniki do planowania weekendowych posiłków. */
 window.NKWeekendRecipes = [
   {
     "id": "golabki-pani-gosi",
@@ -262,6 +262,31 @@ window.NKWeekendRecipes = [
       "4–5 żółtek jaj",
       "Sól — do smaku",
       "Świeżo mielony czarny pieprz — do smaku"
+    ]
+  },
+  {
+    "id": "schabowy-z-duszonymi-pieczarkami",
+    "title": "Kotlet schabowy z duszonymi pieczarkami i purée",
+    "url": "schabowy-z-duszonymi-pieczarkami.html",
+    "image": "schabowy-z-pieczarkami-glowne.webp",
+    "category": "Obiady",
+    "ingredients": [
+      "3 plastry schabu bez kości",
+      "2 jajka do panierowania",
+      "Około 60 g mąki pszennej",
+      "Około 90 g bułki tartej",
+      "Sól i świeżo mielony pieprz — do smaku",
+      "Olej do smażenia",
+      "1 łyżka masła klarowanego lub smalcu",
+      "250 g świeżych pieczarek",
+      "1 duża cebula lub 2 mniejsze",
+      "1–2 ząbki czosnku",
+      "1 łyżka masła do pieczarek",
+      "2–3 łyżki wody (opcjonalnie, do duszenia)",
+      "Świeża natka pietruszki",
+      "600 g ziemniaków",
+      "30 g masła do purée",
+      "75–90 ml ciepłego mleka"
     ]
   }
 ];
