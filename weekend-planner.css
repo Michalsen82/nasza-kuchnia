@@ -212,3 +212,80 @@ body.nk-weekend-page .navlinks .nav-primary{background:#f04475;border-radius:30p
 }
 /* Skrajnie niski viewport: dostępność ważniejsza niż ucięcie formularza. */
 @media(max-height:485px){#nk-add-dialog{overflow-y:auto}}
+
+
+/* v1.2 — szerokość obu nowych podstron zgodna 1:1 z górną belką */
+body.nk-weekend-page .nk-shell{
+ max-width:1320px;
+ width:calc(100% - 48px);
+ box-sizing:border-box;
+ margin-left:auto;
+ margin-right:auto;
+ padding:42px 0 90px;
+}
+body.nk-weekend-page .nk-shopping-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+body.nk-weekend-page .nk-print-weekend{display:none}
+@media(max-width:760px){
+ body.nk-weekend-page .nk-shell{width:calc(100% - 32px);padding:23px 0 60px}
+ body.nk-weekend-page .nk-shopping-actions{justify-content:flex-start}
+}
+
+/* Druk tylko listy zakupów, a nie całego menu: jedna strona A4 lub kolejne
+   arkusze wyłącznie z pozycjami zakupowymi. */
+@page{size:A4;margin:15mm 15mm 16mm}
+@media print{
+ html,body.nk-weekend-page[data-nk-page="detail"]{width:100%!important;min-height:auto!important;background:#fff!important;color:#19263a!important;margin:0!important}
+ body.nk-weekend-page[data-nk-page="detail"] > header,
+ body.nk-weekend-page[data-nk-page="detail"] > footer,
+ body.nk-weekend-page[data-nk-page="detail"] > dialog,
+ body.nk-weekend-page[data-nk-page="detail"] .nk-toast{display:none!important}
+ body.nk-weekend-page[data-nk-page="detail"] main.nk-shell{
+   width:100%!important;max-width:none!important;min-height:0!important;
+   display:block!important;padding:0!important;margin:0!important
+ }
+ body.nk-weekend-page[data-nk-page="detail"] main.nk-shell > :not(#nk-shopping-section){display:none!important}
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section{
+   display:block!important;visibility:visible!important;width:100%!important;max-width:none!important;
+   margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;
+   background:#fff!important;color:#19263a!important;break-before:auto;break-inside:auto
+ }
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section .nk-shopping-head{
+   display:block!important;border-bottom:1px solid #a7b0bc;padding-bottom:12px;margin-bottom:8px
+ }
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section .nk-shopping-head .nk-picker-links,
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section .nk-footnote,
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section .nk-button{
+   display:none!important
+ }
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section .nk-eyebrow{
+   color:#444!important;font-size:9pt;letter-spacing:1.3px
+ }
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section h2{
+   font-size:23pt!important;line-height:1.2!important;color:#19263a!important;margin:6px 0 4px
+ }
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section .nk-print-weekend{
+   display:block!important;color:#344354!important;font-size:11pt;font-weight:700;margin:10px 0 12px
+ }
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section #nk-shopping-count{
+   color:#556371!important;font-size:9.5pt;margin:4px 0!important
+ }
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section .nk-shopping-list{
+   display:block!important;columns:2;column-gap:14mm;column-rule:0;
+   list-style:none;margin:12px 0 0!important;padding:0!important
+ }
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section .nk-shopping-list li{
+   display:flex!important;break-inside:avoid;page-break-inside:avoid;
+   padding:8px 0!important;border-bottom:1px solid #d9dee4!important;
+   font-size:10pt!important;line-height:1.45!important;color:#19263a!important
+ }
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section .nk-shopping-list small{
+   display:none!important
+ }
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section .nk-shopping-list input{
+   appearance:auto!important;print-color-adjust:exact;flex-shrink:0;
+   width:15px!important;height:15px!important
+ }
+ body.nk-weekend-page[data-nk-page="detail"] #nk-shopping-section .nk-shopping-list label{
+   break-inside:avoid;page-break-inside:avoid
+ }
+}
