@@ -1,0 +1,77 @@
+name: "Nasza Kuchnia — kontrola planera weekendowego"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '*.html'
+      - 'weekend-planner.js'
+      - 'weekend-planner.css'
+      - 'weekend-catalog.js'
+      - '.github/workflows/validate-weekend-planner.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Składnia JS, kompletność stron i terminy weekendowe
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sprawdź składnię skryptów
+        run: |
+          node --check weekend-planner.js
+          node --check weekend-catalog.js
+      - name: Sprawdź logikę dat w JavaScript
+        run: |
+          node <<'NODE'
+          const fs = require('fs'), vm = require('vm'), assert = require('node:assert/strict');
+          const window = { addEventListener: () => {} };
+          const document = {readyState: 'loading', addEventListener: () => {}};
+          const context = {window, document, console, localStorage: {}};
+          vm.createContext(context);
+          vm.runInContext(fs.readFileSync('weekend-catalog.js', 'utf8'),context);
+          vm.runInContext(fs.readFileSync('weekend-planner.js', 'utf8'),context);
+          assert.equal(window.NKWeekendRecipes.length, 13);
+          assert.equal(window.NKWeekendRecipes.reduce((n,x)=>n+x.ingredients.length,0),132);
+          for (const id of ['golabki-pani-gosi','makaron-z-pesto','zeberka-w-miodzie']) {
+            assert.ok(window.NKWeekendRecipes.some(r=>r.id===id));
+          }
+          for (const [date,expected] of [
+            ['2026-10-28','2026-10-30'],
+            ['2026-10-30','2026-10-30'],
+            ['2026-10-31','2026-10-30'],
+            ['2026-11-01','2026-10-30'],
+            ['2026-11-02','2026-11-06'],
+            ['2026-12-31','2027-01-01']
+          ]) {
+            const d=new Date(date+'T12:00:00');
+            const f=window.NKWeekend.friday(d);
+            const got=f.getFullYear()+'-'+String(f.getMonth()+1).padStart(2,'0')+'-'+String(f.getDate()).padStart(2,'0');
+            assert.equal(got,expected,'Date '+date);
+          }
+          console.log('Testy dat i katalogu 13 przepisów OK');
+          NODE
+      - name: Sprawdź integrację we wszystkich podstronach
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          pages=[p for p in Path('.').glob('*.html') if p.name not in ('menu-weekendowe.html','weekend-menu.html')]
+          assert len(pages)==14, f'Expected 14 pages, got {len(pages)}'
+          for file in pages:
+              s=file.read_text('utf8')
+              assert '<a href="menu-weekendowe.html">Menu weekendowe</a>' in s, file
+              assert s.count('<script src="weekend-planner.js" defer></script>')==1, file
+              assert s.count('<script src="weekend-catalog.js" defer></script>')==1, file
+              assert s.count('<link rel="stylesheet" href="weekend-planner.css"/>')==1, file
+              assert s.count('</html>')==1, file
+          for name,kind in [('menu-weekendowe.html','calendar'),('weekend-menu.html','detail')]:
+              s=Path(name).read_text('utf8')
+              assert f'data-nk-page="{kind}"' in s, name
+              assert 'weekend-planner.js' in s, name
+          assert 'nk-shopping-items' in Path('weekend-menu.html').read_text('utf8')
+          print(f'Wszystkie {len(pages)} stron zintegrowane. Nowe podstrony OK.')
+          PY
