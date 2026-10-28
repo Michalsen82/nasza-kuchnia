@@ -113,3 +113,9 @@ body.nk-weekend-page *{box-sizing:border-box}
 @media(max-width:950px){.nk-planner-grid{grid-template-columns:1fr}.nk-day-columns{grid-template-columns:1fr}.nk-day-panel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.nk-day-panel h2,.nk-day-panel>p{grid-column:1/-1}.nk-slot{margin:0}}
 @media(max-width:650px){.nk-shell{padding:23px 15px 60px}.nk-hero{border-radius:20px;padding:27px 20px}.nk-weekend-page header nav{width:calc(100% - 30px);display:block}.nk-weekend-page .navlinks{margin-top:15px;gap:12px}.nk-weekend-page .brand{font-size:22px}.nk-panel,.nk-shopping{padding:18px}.nk-day-panel{display:block}.nk-slot{margin:10px 0}.nk-weekend-list{grid-template-columns:1fr}.nk-shopping-list{columns:1}.nk-dialog-head{padding:20px 17px 13px}.nk-dialog-content{padding:18px 17px 22px}.nk-meals{gap:5px}.nk-meals span{font-size:12px;padding:11px 2px}.nk-weekend-card{align-items:flex-start}.nk-status{white-space:normal}.family-copy .weekend-add-button,.featured-info .weekend-add-button{margin-left:0;margin-right:8px}.nk-shopping-head h2{font-size:24px}}
 @media print{header,.nk-picker-links,.nk-shopping-head button,.nk-slot-actions,.nk-add-dialog,footer{display:none!important}.nk-shell{padding:0}.nk-hero{padding:10px;margin:0}.nk-card{box-shadow:none}.nk-shopping{display:block!important}.nk-shopping-list{columns:2}}
+
+/* Oba przyciski w kartach stoją obok siebie, także przy układzie flex-column. */
+#kolekcja .nk-card-actions{display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:wrap!important;gap:9px!important;width:100%}
+#kolekcja .nk-card-actions .weekend-add-button{margin:0!important;flex:0 0 auto}
+#kolekcja .nk-card-actions a{margin:0!important}
+@media(max-width:650px){#kolekcja .nk-card-actions{justify-content:flex-start!important}#kolekcja .nk-card-actions .weekend-add-button{white-space:normal!important}}
