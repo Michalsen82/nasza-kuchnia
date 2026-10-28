@@ -253,7 +253,7 @@ window.NKWeekendRecipes = [
     "id": "spaghetti-carbonara",
     "title": "Spaghetti carbonara",
     "url": "spaghetti-carbonara.html",
-    "image": "https://images.pexels.com/photos/12557557/pexels-photo-12557557.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "image": "spaghetti-carbonara-glowne.webp",
     "category": "Obiady",
     "ingredients": [
       "250 g makaronu spaghetti (waga przed ugotowaniem)",

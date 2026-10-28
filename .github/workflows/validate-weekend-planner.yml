@@ -137,6 +137,14 @@ jobs:
           assert 'function printShoppingOnly(){renderShopping();window.print();}' in script
           assert 'printRange.textContent="Weekend: "+compactWeekend(f);' in script
           print('Test szerokości obu stron oraz wydruku samej listy zakupów OK')
+          carbonara_photo=Path('spaghetti-carbonara-glowne.webp')
+          assert carbonara_photo.is_file(), 'Missing carbonara photo'
+          carbonara_image=carbonara_photo.read_bytes()
+          assert len(carbonara_image)>60000 and carbonara_image[:4]==b'RIFF' and carbonara_image[8:12]==b'WEBP', 'Invalid carbonara WebP'
+          carbonara_page=Path('spaghetti-carbonara.html').read_text('utf8')
+          assert 'src="spaghetti-carbonara-glowne.webp"' in carbonara_page
+          assert 'src="spaghetti-carbonara-glowne.webp"' in Path('index.html').read_text('utf8')
+          assert '"image": "spaghetti-carbonara-glowne.webp"' in Path('weekend-catalog.js').read_text('utf8')
           assert Path('spaghetti-carbonara.html').is_file()
           content=Path('spaghetti-carbonara.html').read_text('utf8')
           assert 'id="spaghetti-carbonara"' in content
