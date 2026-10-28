@@ -145,6 +145,7 @@ var holder=document.getElementById("nk-detail-days");holder.innerHTML=DAY_NAMES.
 var restore=hidden.length?'<div class="nk-restore-row"><small>Pominięte:</small>'+hidden.map(function(meal){return '<button class="nk-restore-meal" type="button" data-nk-restore="'+iso(date)+'|'+meal.id+'">＋ '+meal.label+'</button>';}).join("")+'</div>':"";
 return '<article class="nk-card nk-day-panel"><h2>'+day+'</h2><p>'+esc(format(date))+'</p>'+MEALS.map(function(meal){return slotCard(date,meal);}).join("")+restore+"</article>";}).join("");
 var progress=document.getElementById("nk-detail-progress");if(progress)progress.textContent=planCount(f)+" / 9 posiłków zaplanowanych";
+var printRange=document.getElementById("nk-print-weekend-range");if(printRange)printRange.textContent="Weekend: "+compactWeekend(f);
 var shop=document.getElementById("nk-shopping-section");shop.hidden=!detailShoppingVisible;
 if(detailShoppingVisible)renderShopping();
 }
@@ -171,7 +172,9 @@ if(restore){var parts3=restore.dataset.nkRestore.split("|");if(restoreMeal(parse
 document.getElementById("nk-shopping-toggle").addEventListener("click",function(){detailShoppingVisible=!detailShoppingVisible;this.textContent=detailShoppingVisible?"Ukryj listę zakupów":"🛒 Pokaż listę zakupów weekendową";renderDetail();if(detailShoppingVisible)document.getElementById("nk-shopping-section").scrollIntoView({behavior:"smooth",block:"start"});});
 document.getElementById("nk-shopping-items").addEventListener("change",function(e){var b=e.target.closest("[data-nk-check]");if(!b)return;var all=storageRead(CHECK_KEY);var f=iso(detailFriday);all[f]=all[f]||{};all[f][b.dataset.nkCheck]=b.checked;storageSave(CHECK_KEY,all);});
 document.getElementById("nk-copy-shopping").addEventListener("click",function(){var items=getIngredients(detailFriday),text="Nasza Kuchnia — lista zakupów na weekend "+compactWeekend(detailFriday)+"\n\n"+items.map(function(x){return "☐ "+(x.count>1?x.count+" × ":"")+x.name;}).join("\n");if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){notify("Lista zakupów skopiowana.");}).catch(function(){prompt("Skopiuj listę:",text);});}else prompt("Skopiuj listę:",text);});
-document.getElementById("nk-print-shopping").addEventListener("click",function(){window.print();});
+function printShoppingOnly(){renderShopping();window.print();}
+document.getElementById("nk-print-shopping").addEventListener("click",printShoppingOnly);
+document.getElementById("nk-print-shopping-main").addEventListener("click",printShoppingOnly);
 document.getElementById("nk-pick-close").addEventListener("click",function(){document.getElementById("nk-pick-dialog").close();});
 document.getElementById("nk-pick-search").addEventListener("input",renderPickerResults);
 document.getElementById("nk-pick-results").addEventListener("click",function(e){var b=e.target.closest("[data-nk-recipe]");if(!b)return;var dlg=document.getElementById("nk-pick-dialog"),k=dlg.dataset.nkSlot.split("|"),date=parse(k[0]),meal=k[1];if(saveRecipe(b.dataset.nkRecipe,date,meal)){dlg.close();renderDetail();notify("Posiłek dodany do menu na "+format(date)+".");}});
