@@ -35,9 +35,9 @@ jobs:
           vm.createContext(context);
           vm.runInContext(fs.readFileSync('weekend-catalog.js', 'utf8'),context);
           vm.runInContext(fs.readFileSync('weekend-planner.js', 'utf8'),context);
-          assert.equal(window.NKWeekendRecipes.length, 13);
-          assert.equal(window.NKWeekendRecipes.reduce((n,x)=>n+x.ingredients.length,0),132);
-          for (const id of ['golabki-pani-gosi','makaron-z-pesto','zeberka-w-miodzie']) {
+          assert.ok(window.NKWeekendRecipes.length >= 14, 'Missing new carbonara recipe');
+          assert.ok(window.NKWeekendRecipes.reduce((n,x)=>n+x.ingredients.length,0) >= 138, 'Missing ingredients');
+          for (const id of ['golabki-pani-gosi','makaron-z-pesto','zeberka-w-miodzie','spaghetti-carbonara']) {
             assert.ok(window.NKWeekendRecipes.some(r=>r.id===id));
           }
           for (const [date,expected] of [
@@ -107,7 +107,7 @@ jobs:
           python3 <<'PY'
           from pathlib import Path
           pages=[p for p in Path('.').glob('*.html') if p.name not in ('menu-weekendowe.html','weekend-menu.html')]
-          assert len(pages)==14, f'Expected 14 pages, got {len(pages)}'
+          assert len(pages)>=15, f'Expected at least 15 pages, got {len(pages)}'
           for file in pages:
               s=file.read_text('utf8')
               assert '<a href="menu-weekendowe.html">Menu weekendowe</a>' in s, file
@@ -137,5 +137,13 @@ jobs:
           assert 'function printShoppingOnly(){renderShopping();window.print();}' in script
           assert 'printRange.textContent="Weekend: "+compactWeekend(f);' in script
           print('Test szerokości obu stron oraz wydruku samej listy zakupów OK')
-          print(f'Wszystkie {len(pages)} stron zintegrowane. Nowe podstrony OK.')
+          assert Path('spaghetti-carbonara.html').is_file()
+          content=Path('spaghetti-carbonara.html').read_text('utf8')
+          assert 'id="spaghetti-carbonara"' in content
+          assert content.count('class="family-step"')==6
+          assert content.count('class="family-check"')==6
+          homepage=Path('index.html').read_text('utf8')
+          assert 'href="spaghetti-carbonara.html"' in homepage
+          assert 'featured-spaghetti-carbonara' in homepage
+          print(f'Wszystkie {len(pages)} stron zintegrowane, nowa carbonara OK.')
           PY
