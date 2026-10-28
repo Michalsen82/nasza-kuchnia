@@ -1,0 +1,29 @@
+name: "Nasza Kuchnia — test obu adresów Cloudflare"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/check-both-cloudflare-pages.yml']
+permissions:
+  contents: read
+jobs:
+  verify-domains:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Zidentyfikuj serwis i wersję przepisów na obu domenach
+        run: |
+          python3 - <<'PY'
+          from urllib.request import Request,urlopen
+          from urllib.error import HTTPError
+          import re
+          for domain in ["naszakuchnia.pages.dev","nasza-kuchnia.pages.dev"]:
+            for path in ["/","/makaron-z-pesto.html","/zeberka-w-miodzie.html"]:
+              url=f"https://{domain}{path}?verify=20261028-1630"
+              try:
+                req=Request(url,headers={"User-Agent":"Mozilla/5.0","Cache-Control":"no-cache"})
+                with urlopen(req,timeout=12) as resp:
+                  body=resp.read(220000).decode("utf-8","replace")
+                  title=re.search(r'<title[^>]*>(.*?)</title>',body,re.I|re.S)
+                  print(f"DOMAIN={domain} PATH={path} HTTP={resp.status} bytes={len(body.encode())} NEW_HEADER={'Dodaj przepis' in body} title={(title.group(1) if title else '')[:95]!r}",flush=True)
+              except Exception as e: print(f"DOMAIN={domain} PATH={path} ERROR={type(e).__name__} DETAIL={str(e)[:180]}",flush=True)
+          PY
