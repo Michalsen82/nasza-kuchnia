@@ -248,5 +248,20 @@ window.NKWeekendRecipes = [
       "1 łyżeczka pieprzu",
       "Odrobina masła do naczynia"
     ]
+  },
+  {
+    "id": "spaghetti-carbonara",
+    "title": "Spaghetti carbonara",
+    "url": "spaghetti-carbonara.html",
+    "image": "https://images.pexels.com/photos/12557557/pexels-photo-12557557.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    "category": "Obiady",
+    "ingredients": [
+      "250 g makaronu spaghetti (waga przed ugotowaniem)",
+      "100–150 g boczku wędzonego",
+      "Około 100 g startego Pecorino Romano (lub parmezanu albo Grana Padano)",
+      "4–5 żółtek jaj",
+      "Sól — do smaku",
+      "Świeżo mielony czarny pieprz — do smaku"
+    ]
   }
 ];
