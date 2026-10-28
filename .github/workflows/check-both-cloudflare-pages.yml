@@ -1,29 +1,50 @@
-name: "Nasza Kuchnia — test obu adresów Cloudflare"
+name: "Nasza Kuchnia — kontrola wersji opublikowanej"
+
 on:
   push:
     branches: [main]
     paths: ['.github/workflows/check-both-cloudflare-pages.yml']
+  workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
-  verify-domains:
+  production:
+    name: Sprawdź poprawną publikację na naszakuchnia.pages.dev
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Zidentyfikuj serwis i wersję przepisów na obu domenach
+      - name: Zweryfikuj nowy planer, przepisy i zasoby
+        shell: bash
         run: |
           python3 - <<'PY'
-          from urllib.request import Request,urlopen
+          from urllib.request import Request, urlopen
           from urllib.error import HTTPError
-          import re
-          for domain in ["naszakuchnia.pages.dev","nasza-kuchnia.pages.dev"]:
-            for path in ["/","/makaron-z-pesto.html","/zeberka-w-miodzie.html"]:
-              url=f"https://{domain}{path}?verify=20261028-1630"
-              try:
-                req=Request(url,headers={"User-Agent":"Mozilla/5.0","Cache-Control":"no-cache"})
-                with urlopen(req,timeout=12) as resp:
-                  body=resp.read(220000).decode("utf-8","replace")
-                  title=re.search(r'<title[^>]*>(.*?)</title>',body,re.I|re.S)
-                  print(f"DOMAIN={domain} PATH={path} HTTP={resp.status} bytes={len(body.encode())} NEW_HEADER={'Dodaj przepis' in body} title={(title.group(1) if title else '')[:95]!r}",flush=True)
-              except Exception as e: print(f"DOMAIN={domain} PATH={path} ERROR={type(e).__name__} DETAIL={str(e)[:180]}",flush=True)
+          routes={
+            "/":"href=\"menu-weekendowe.html\">Menu weekendowe",
+            "/menu-weekendowe.html":"data-nk-page=\"calendar\"",
+            "/weekend-menu.html":"data-nk-page=\"detail\"",
+            "/weekend-planner.js":"nasza-kuchnia-weekend-plan-v1",
+            "/weekend-catalog.js":"window.NKWeekendRecipes",
+            "/weekend-planner.css":"#kolekcja .nk-card-actions",
+            "/makaron-z-pesto.html":"weekend-planner.js",
+            "/zeberka-w-miodzie.html":"weekend-planner.js",
+          }
+          failures=[]
+          for path, expected in routes.items():
+            url="https://naszakuchnia.pages.dev"+path
+            try:
+              req=Request(url,headers={"User-Agent":"Mozilla/5.0 (NaszaKuchniaDeployVerifier)","Cache-Control":"no-cache, no-store"})
+              with urlopen(req,timeout=15) as resp:
+                body=resp.read(300000).decode("utf-8","replace")
+                ok=resp.status==200 and expected in body
+                print(f"{'OK' if ok else 'OLD'} {path}: HTTP {resp.status}, {len(body)} chars, marker={ok}, type={resp.headers.get('content-type')}",flush=True)
+                if not ok: failures.append(path)
+            except Exception as ex:
+              print(f"ERR {path}: {type(ex).__name__}: {str(ex)[:180]}",flush=True)
+              failures.append(path)
+          if failures:
+            raise SystemExit("Nieopublikowane lub nieaktualne: "+", ".join(failures))
+          print("Wszystkie strony i zasoby planera są aktualne na właściwej domenie.",flush=True)
           PY
