@@ -91,7 +91,7 @@ var monthControl=document.getElementById("nk-month-select"),yearControl=document
 if(monthControl)monthControl.value=String(month.getMonth());if(yearControl)yearControl.value=String(month.getFullYear());
 var cal=document.getElementById("nk-calendar-month"),heading=document.getElementById("nk-calendar-month-heading");
 if(heading)heading.textContent=MONTHS[month.getMonth()]+" "+month.getFullYear();
-if(cal)cal.innerHTML=calendarHtml(month,null,false);
+if(cal)cal.innerHTML=calendarHtml(month,calendarState.selected,false);
 var list=document.getElementById("nk-weekend-list");if(list)list.innerHTML=weekCards(month).map(function(f){var count=planCount(f),detail="weekend-menu.html?weekend="+iso(f);
 return '<a class="nk-weekend-card" href="'+detail+'"><span><strong>'+esc(compactWeekend(f))+'</strong><small>'+count+'/9 zaplanowanych posiłków</small></span><span class="nk-status'+(count?"":" empty")+'">'+(count?"✓ Menu zaplanowane":"＋ Zaplanuj menu")+'</span></a>';
 }).join("");
