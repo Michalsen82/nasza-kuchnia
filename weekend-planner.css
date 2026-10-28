@@ -1,0 +1,115 @@
+
+/* NASZA KUCHNIA · wspólny moduł planera weekendowego */
+:root{--nk-navy:#132c4b;--nk-blue:#2563b6;--nk-rose:#ed3e79;--nk-soft:#fff3f8;--nk-stroke:#e9dce6;--nk-quiet:#60718a}
+.weekend-add-button{display:inline-flex!important;align-items:center;justify-content:center;gap:7px;background:var(--nk-blue)!important;color:#fff!important;border:1px solid var(--nk-blue)!important;border-radius:999px;padding:13px 20px;min-height:44px;font:700 14px 'DM Sans',Arial,sans-serif;line-height:1.25;text-decoration:none!important;box-shadow:0 5px 14px #2563b620;cursor:pointer;white-space:nowrap;transition:background .2s,transform .2s}
+.weekend-add-button:hover{background:#194d93!important;transform:translateY(-1px)}
+.weekend-add-button:focus-visible,.nk-button:focus-visible,.nk-day:focus-visible{outline:3px solid #8baee7;outline-offset:3px}
+.family-copy .weekend-add-button,.featured-info .weekend-add-button,.side-recipe .weekend-add-button{margin-left:10px;margin-top:10px;vertical-align:middle}
+.family-nav .weekend-add-button{margin-left:0}
+.nk-dim{color:var(--nk-quiet)}
+#nk-add-dialog{border:none;padding:0;width:min(680px,calc(100% - 24px));max-height:min(94vh,950px);overflow:auto;border-radius:26px;box-shadow:0 28px 85px #0c254d48;color:var(--nk-navy);background:#fff;font-family:'DM Sans',Arial,sans-serif}
+#nk-add-dialog::backdrop{background:rgba(10,25,50,.57);backdrop-filter:blur(3px)}
+.nk-dialog-head{display:flex;align-items:start;justify-content:space-between;gap:20px;padding:24px 26px 15px;background:linear-gradient(115deg,#fff0f6,#eff6ff)}
+.nk-dialog-head h2{margin:4px 0 8px;font:700 clamp(24px,4vw,34px) Georgia,serif;color:var(--nk-navy);line-height:1.2}
+.nk-dialog-close{display:grid;place-items:center;width:40px;height:40px;border:1px solid #dcdfea;border-radius:50%;background:#fff;color:var(--nk-navy);cursor:pointer;font-size:24px;flex-shrink:0}
+.nk-dialog-content{padding:24px 26px 26px}
+.nk-recipe-selected{display:flex;gap:13px;align-items:center;border:1px solid #e6e7ef;border-radius:15px;padding:8px;background:#fff;margin-bottom:20px}
+.nk-recipe-selected img{width:74px;height:62px;object-fit:cover;border-radius:11px}
+.nk-recipe-selected strong{font-size:15px}
+.nk-eyebrow{color:var(--nk-rose);text-transform:uppercase;letter-spacing:2px;font-size:11px;font-weight:800}
+.nk-field-title{display:block;color:var(--nk-navy);font-weight:800;font-size:14px;margin:18px 0 10px}
+.nk-meals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.nk-meals label{position:relative;cursor:pointer}
+.nk-meals input{position:absolute;opacity:0}
+.nk-meals span{display:flex;align-items:center;justify-content:center;border:1.5px solid #dee5ee;padding:12px 5px;border-radius:13px;background:#fff;font-size:13px;font-weight:700;color:var(--nk-navy)}
+.nk-meals input:checked+span{border-color:var(--nk-blue);color:var(--nk-blue);background:#eaf2ff}
+.nk-meals input:focus-visible+span{outline:3px solid #8baee7;outline-offset:2px}
+.nk-calendar-toolbar{display:flex;justify-content:space-between;align-items:center;gap:9px;margin:12px 0 14px}
+.nk-calendar-title{font:700 20px Georgia,serif;color:var(--nk-navy);text-transform:capitalize}
+.nk-icon-button{display:inline-grid;place-items:center;min-width:38px;height:38px;border:1px solid #d7e0ec;border-radius:12px;background:#fff;color:var(--nk-navy);font-weight:900;cursor:pointer;font-size:17px}
+.nk-icon-button:hover{background:#edf4ff}
+.nk-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.nk-weekday{text-align:center;font-size:11px;font-weight:800;padding:8px 0;color:#67758b}
+.nk-weekday:nth-child(n+5){color:var(--nk-blue)}
+.nk-day{border:1px solid transparent;border-radius:10px;min-height:39px;background:#fff;font-size:13px;color:var(--nk-navy);position:relative;cursor:pointer}
+.nk-day.is-weekend{background:#eaf2ff;color:#1d5092;font-weight:800}
+.nk-day.is-selected{background:var(--nk-blue);color:#fff;border-color:var(--nk-blue)}
+.nk-day.is-outside{opacity:.35}
+.nk-day[disabled]{background:#f8f9fb;color:#bbc4d0;cursor:default}
+.nk-day.has-meal:after{content:"";width:5px;height:5px;background:var(--nk-rose);position:absolute;bottom:4px;left:calc(50% - 2px);border-radius:50%}
+.nk-dialog-info{font-size:13px;color:var(--nk-quiet);line-height:1.6;margin:14px 0}
+.nk-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--nk-blue);color:white;border:0;border-radius:999px;padding:13px 19px;font:700 14px 'DM Sans',Arial,sans-serif;text-decoration:none;cursor:pointer;transition:filter .15s;min-height:44px}
+.nk-button:hover{filter:brightness(.92)}
+.nk-button.rose{background:var(--nk-rose)}
+.nk-button.light{border:1px solid #d7e1ee;background:#fff;color:var(--nk-navy)}
+.nk-dialog-submit{width:100%;margin-top:12px}
+.nk-alert{padding:12px 14px;border-radius:12px;background:#e9f4ff;color:#19446e;font-size:13px;font-weight:700;line-height:1.5}
+.nk-alert.error{background:#fff0f0;color:#9b2c42}
+body.nk-weekend-page{margin:0;background:#fffafc;color:var(--nk-navy);font-family:'DM Sans',Arial,sans-serif}
+body.nk-weekend-page *{box-sizing:border-box}
+.nk-weekend-page header{background:rgba(255,255,255,.97);border-bottom:1px solid #ebdfea;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+.nk-weekend-page header nav{max-width:1250px;width:calc(100% - 44px);margin:auto;display:flex;align-items:center;justify-content:space-between;gap:22px;padding:16px 0}
+.nk-weekend-page .brand{font-family:Georgia,serif;font-size:26px;font-style:italic;color:var(--nk-navy);text-decoration:none;white-space:nowrap}
+.nk-weekend-page .brand small{display:block;font:700 9px 'DM Sans',sans-serif;text-align:center;letter-spacing:4px}
+.nk-weekend-page .heart{color:var(--nk-rose)}
+.nk-weekend-page .navlinks{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.nk-weekend-page .navlinks a{font-size:13px;text-decoration:none;color:var(--nk-navy);font-weight:600}
+.nk-weekend-page .navlinks a.active{color:var(--nk-blue);font-weight:800}
+.nk-weekend-page .navlinks .nav-primary{background:var(--nk-rose);color:#fff;padding:11px 16px;border-radius:999px}
+.nk-shell{max-width:1230px;margin:0 auto;padding:42px 24px 90px}
+.nk-hero{background:linear-gradient(118deg,#fff0f6,#f4f8ff 67%,#e8f1ff);border:1px solid #f0e0e9;border-radius:30px;padding:38px clamp(24px,4vw,50px);margin-bottom:26px;position:relative;overflow:hidden}
+.nk-hero:after{content:"♡";position:absolute;right:36px;top:-46px;color:#ed3e7920;font:220px Georgia,serif;pointer-events:none}
+.nk-hero h1{font:700 clamp(34px,5vw,62px) Georgia,serif;line-height:1.12;margin:12px 0;color:var(--nk-navy);position:relative;z-index:1}
+.nk-hero p{max-width:730px;font-size:16px;line-height:1.7;color:#52647b;margin:0;position:relative;z-index:1}
+.nk-card{border:1px solid var(--nk-stroke);background:white;border-radius:22px;box-shadow:0 12px 32px #1e37500a}
+.nk-planner-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(290px,.85fr);gap:22px}
+.nk-panel{padding:26px}
+.nk-panel h2{font:700 clamp(24px,3vw,32px) Georgia,serif;margin:0 0 10px}
+.nk-legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;color:#687890;font-size:12px;margin-top:14px}
+.nk-legend span:before{content:"";width:11px;height:11px;display:inline-block;border-radius:4px;background:#eaf2ff;border:1px solid #bad1f0;margin-right:7px}
+.nk-legend span:last-child:before{background:#fbe6f0;border-color:#ffbfd4}
+.nk-month-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nk-month-controls select{min-height:39px;border:1px solid #d6e0ec;border-radius:10px;background:white;padding:5px 10px;font:700 13px 'DM Sans',sans-serif;color:var(--nk-navy)}
+.nk-weekend-card{border:1px solid #e8e5ed;border-radius:16px;background:#fff;padding:16px;display:flex;gap:15px;justify-content:space-between;align-items:center;text-decoration:none;color:var(--nk-navy);margin:11px 0}
+.nk-weekend-card:hover{border-color:#84b0e8;box-shadow:0 5px 15px #2463b610}
+.nk-weekend-card strong{display:block;font-size:15px}
+.nk-weekend-card small{display:block;margin-top:4px;color:#63758f;font-size:12px}
+.nk-status{display:inline-flex;align-items:center;font-size:11px;font-weight:800;border-radius:999px;padding:8px 11px;background:#eaf2ff;color:#1e5aa1;white-space:nowrap}
+.nk-status.empty{background:#fff0f6;color:#b52867}
+.nk-section-title{font:700 clamp(25px,3vw,33px) Georgia,serif;color:var(--nk-navy);margin:35px 0 17px}
+.nk-weekend-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.nk-weekend-list .nk-weekend-card{margin:0}
+.nk-picker-links{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:22px}
+.nk-day-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.nk-day-panel{padding:22px 16px}
+.nk-day-panel h2{font:700 24px Georgia,serif;margin:2px 6px 2px}
+.nk-day-panel>p{font-size:12px;color:#68768b;margin:0 6px 16px}
+.nk-slot{border:1px solid #e8e7ef;background:#fff;border-radius:16px;padding:14px;margin:10px 0}
+.nk-slot-name{font-size:11px;text-transform:uppercase;letter-spacing:1.3px;font-weight:900;color:#a04473;margin-bottom:10px}
+.nk-slot strong{display:block;font-size:14px;line-height:1.4;margin-bottom:9px}
+.nk-slot img{width:100%;aspect-ratio:2.1;object-fit:cover;border-radius:10px;margin-bottom:10px}
+.nk-slot-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.nk-slot-actions a{font-size:12px;color:var(--nk-blue);font-weight:800;text-decoration:none}
+.nk-slot-actions button{background:none;border:0;font:700 12px 'DM Sans',sans-serif;cursor:pointer;color:var(--nk-rose);padding:3px}
+.nk-empty-slot{text-align:center;padding:20px 8px;background:#f8fbff;border:1px dashed #c8d9ed;border-radius:12px;color:#718099;font-size:13px}
+.nk-empty-slot button{border:0;background:transparent;color:var(--nk-blue);font:800 13px 'DM Sans',sans-serif;cursor:pointer;padding:8px}
+.nk-shopping{padding:26px;margin-top:20px}
+.nk-shopping-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.nk-shopping-head h2{font:700 29px Georgia,serif;margin:0}
+.nk-shopping-list{columns:2;column-gap:28px;list-style:none;margin:24px 0 8px;padding:0}
+.nk-shopping-list li{break-inside:avoid;display:flex;gap:10px;padding:11px 0;border-bottom:1px solid #f1eaf0;line-height:1.45;font-size:14px}
+.nk-shopping-list input{accent-color:var(--nk-blue);width:18px;height:18px;flex-shrink:0;margin-top:2px}
+.nk-shopping-list input:checked+span{text-decoration:line-through;color:#9ca6b3}
+.nk-shopping-list small{color:#758396;display:block;font-size:11px;line-height:1.3;margin-top:2px}
+.nk-footnote{margin-top:18px;font-size:12px;color:#718198;line-height:1.65}
+.nk-weekend-page footer{padding:30px 20px;text-align:center;border-top:1px solid #eadfea;color:#718198;font-size:13px}
+.nk-recipe-picker{display:grid;gap:9px;margin:15px 0}
+.nk-recipe-picker input,.nk-recipe-picker select{width:100%;border:1px solid #dce4f0;border-radius:12px;padding:12px;font:14px 'DM Sans',sans-serif}
+.nk-recipe-picker-results{max-height:280px;overflow:auto;display:grid;gap:8px}
+.nk-recipe-option{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid #e5e7ef;border-radius:12px;background:white;padding:8px;cursor:pointer;color:var(--nk-navy)}
+.nk-recipe-option:hover{border-color:var(--nk-blue)}
+.nk-recipe-option img{width:57px;height:47px;object-fit:cover;border-radius:8px}
+.nk-toast{position:fixed;bottom:18px;right:18px;background:#16355a;color:white;padding:14px 18px;border-radius:14px;box-shadow:0 8px 26px #19355544;z-index:101;font:700 13px 'DM Sans',sans-serif;max-width:300px}
+@media(max-width:950px){.nk-planner-grid{grid-template-columns:1fr}.nk-day-columns{grid-template-columns:1fr}.nk-day-panel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.nk-day-panel h2,.nk-day-panel>p{grid-column:1/-1}.nk-slot{margin:0}}
+@media(max-width:650px){.nk-shell{padding:23px 15px 60px}.nk-hero{border-radius:20px;padding:27px 20px}.nk-weekend-page header nav{width:calc(100% - 30px);display:block}.nk-weekend-page .navlinks{margin-top:15px;gap:12px}.nk-weekend-page .brand{font-size:22px}.nk-panel,.nk-shopping{padding:18px}.nk-day-panel{display:block}.nk-slot{margin:10px 0}.nk-weekend-list{grid-template-columns:1fr}.nk-shopping-list{columns:1}.nk-dialog-head{padding:20px 17px 13px}.nk-dialog-content{padding:18px 17px 22px}.nk-meals{gap:5px}.nk-meals span{font-size:12px;padding:11px 2px}.nk-weekend-card{align-items:flex-start}.nk-status{white-space:normal}.family-copy .weekend-add-button,.featured-info .weekend-add-button{margin-left:0;margin-right:8px}.nk-shopping-head h2{font-size:24px}}
+@media print{header,.nk-picker-links,.nk-shopping-head button,.nk-slot-actions,.nk-add-dialog,footer{display:none!important}.nk-shell{padding:0}.nk-hero{padding:10px;margin:0}.nk-card{box-shadow:none}.nk-shopping{display:block!important}.nk-shopping-list{columns:2}}
