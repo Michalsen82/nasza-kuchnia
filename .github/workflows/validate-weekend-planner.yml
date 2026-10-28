@@ -120,5 +120,22 @@ jobs:
               assert f'data-nk-page="{kind}"' in s, name
               assert 'weekend-planner.js' in s, name
           assert 'nk-shopping-items' in Path('weekend-menu.html').read_text('utf8')
+          # Spójność marginesów obu nowych podstron i wydruk wyłącznie zakupów.
+          style=Path('weekend-planner.css').read_text('utf8')
+          detail=Path('weekend-menu.html').read_text('utf8')
+          script=Path('weekend-planner.js').read_text('utf8')
+          assert 'body.nk-weekend-page .nk-shell{' in style
+          assert 'max-width:1320px;' in style
+          assert 'width:calc(100% - 48px)' in style
+          assert 'body.nk-weekend-page .nk-shell{width:calc(100% - 32px)' in style
+          assert '@page{size:A4;margin:15mm 15mm 16mm}' in style
+          assert 'main.nk-shell > :not(#nk-shopping-section){display:none!important}' in style
+          assert '#nk-shopping-section .nk-shopping-list' in style
+          assert detail.count('id="nk-print-shopping-main"')==1
+          assert detail.count('id="nk-print-shopping"')==1
+          assert detail.count('id="nk-print-weekend-range"')==1
+          assert 'function printShoppingOnly(){renderShopping();window.print();}' in script
+          assert 'printRange.textContent="Weekend: "+compactWeekend(f);' in script
+          print('Test szerokości obu stron oraz wydruku samej listy zakupów OK')
           print(f'Wszystkie {len(pages)} stron zintegrowane. Nowe podstrony OK.')
           PY
