@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&display=swap");
 
 /* NASZA KUCHNIA · wspólny moduł planera weekendowego */
 :root{--nk-navy:#132c4b;--nk-blue:#2563b6;--nk-rose:#ed3e79;--nk-soft:#fff3f8;--nk-stroke:#e9dce6;--nk-quiet:#60718a}
@@ -119,3 +120,13 @@ body.nk-weekend-page *{box-sizing:border-box}
 #kolekcja .nk-card-actions .weekend-add-button{margin:0!important;flex:0 0 auto}
 #kolekcja .nk-card-actions a{margin:0!important}
 @media(max-width:650px){#kolekcja .nk-card-actions{justify-content:flex-start!important}#kolekcja .nk-card-actions .weekend-add-button{white-space:normal!important}}
+
+/* Nagłówek w tym samym systemie co strona główna Naszej Kuchni. */
+body.nk-weekend-page header{background:#ffffffef;box-shadow:0 2px 20px #16253a0b}
+body.nk-weekend-page header nav{max-width:1320px;width:calc(100% - 48px);padding:14px 0}
+body.nk-weekend-page .brand{font-family:"Playfair Display",Georgia,serif;font-size:30px;font-weight:500;letter-spacing:-1.5px}
+body.nk-weekend-page .navlinks{gap:29px}
+body.nk-weekend-page .navlinks a{font-size:13px}
+body.nk-weekend-page .navlinks a:first-child{color:#f04475}
+body.nk-weekend-page .navlinks .nav-primary{background:#f04475;border-radius:30px;padding:14px 25px;box-shadow:0 7px 20px #f0447520;color:#fff;font-weight:700}
+@media(max-width:760px){body.nk-weekend-page header nav{width:calc(100% - 32px)}body.nk-weekend-page .brand{font-size:23px}body.nk-weekend-page .navlinks{gap:13px}body.nk-weekend-page .navlinks .nav-primary{padding:11px 13px}}
