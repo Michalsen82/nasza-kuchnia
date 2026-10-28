@@ -130,3 +130,85 @@ body.nk-weekend-page .navlinks a{font-size:13px}
 body.nk-weekend-page .navlinks a:first-child{color:#f04475}
 body.nk-weekend-page .navlinks .nav-primary{background:#f04475;border-radius:30px;padding:14px 25px;box-shadow:0 7px 20px #f0447520;color:#fff;font-weight:700}
 @media(max-width:760px){body.nk-weekend-page header nav{width:calc(100% - 32px)}body.nk-weekend-page .brand{font-size:23px}body.nk-weekend-page .navlinks{gap:13px}body.nk-weekend-page .navlinks .nav-primary{padding:11px 13px}}
+
+
+/* Weekend planner v1.1 — czytelny kalendarz bez przewijania modalu na standardowych ekranach */
+#nk-add-dialog{width:min(600px,calc(100vw - 20px));max-height:calc(100dvh - 16px);overflow:visible;overscroll-behavior:contain}
+#nk-add-dialog[open]{display:flex;flex-direction:column}
+#nk-add-dialog .nk-dialog-head{padding:13px 20px 10px;gap:12px;flex-shrink:0}
+#nk-add-dialog .nk-dialog-head h2{font-size:clamp(20px,3vw,27px);line-height:1.12;margin:3px 0 4px}
+#nk-add-dialog .nk-dialog-head .nk-dim{font-size:11px!important;line-height:1.4}
+#nk-add-dialog .nk-dialog-close{width:34px;height:34px;font-size:21px}
+#nk-add-dialog .nk-dialog-content{padding:10px 20px 12px;min-width:0}
+#nk-add-dialog .nk-recipe-selected{padding:5px 8px;margin-bottom:6px;gap:10px;border-radius:12px;min-height:45px}
+#nk-add-dialog .nk-recipe-selected img{width:54px;height:42px;border-radius:8px}
+#nk-add-dialog .nk-recipe-selected strong{font-size:13px;line-height:1.25;display:block}
+#nk-add-dialog .nk-recipe-selected .nk-eyebrow{font-size:9px;letter-spacing:1.2px}
+#nk-add-dialog .nk-field-title{font-size:12px;margin:9px 0 5px}
+#nk-add-dialog .nk-meals{gap:7px}
+#nk-add-dialog .nk-meals span{padding:8px 4px;font-size:12px;min-height:37px}
+#nk-add-dialog .nk-calendar-toolbar{margin:5px 0 8px}
+#nk-add-dialog .nk-calendar-title{font-size:17px}
+#nk-add-dialog .nk-icon-button{height:30px;min-width:34px;border-radius:10px}
+#nk-add-dialog .nk-month-grid{gap:3px}
+#nk-add-dialog .nk-weekday{padding:3px 0;font-size:10px}
+#nk-add-dialog .nk-day{height:39px;min-height:39px}
+#nk-add-dialog .nk-calendar-context{margin:8px 0 2px}
+#nk-add-dialog .nk-dialog-info{margin:5px 0 7px;font-size:12px;line-height:1.35}
+#nk-add-dialog .nk-dialog-submit{min-height:39px;padding:9px 16px;margin-top:2px;font-size:13px}
+#nk-add-dialog .nk-footnote{margin:7px 0 0;font-size:10px;line-height:1.25;text-align:center}
+.nk-day{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1.05;padding:2px 3px;overflow:hidden}
+.nk-day-number{font-size:12px;line-height:1}
+.nk-day-dots{display:flex;align-items:center;justify-content:center;gap:3px;height:5px;min-height:5px}
+.nk-day-dots i{display:block;width:5px;height:5px;border-radius:50%;background:#2862b5;flex:0 0 5px}
+.nk-day.is-weekend:not(.is-selected) .nk-day-dots i{background:#2862b5}
+.nk-day.is-next-weekend{background:#ffe5ef!important;color:#bd2b67!important;border-color:#f3abc7!important;font-weight:800}
+.nk-day.is-next-weekend .nk-day-dots i{background:#df3477!important}
+.nk-day.is-selected{background:var(--nk-blue);color:#fff}
+.nk-day.is-selected:not(.is-next-weekend) .nk-day-dots i{background:#fff}
+.nk-day.is-next-weekend.is-selected{background:#e63876!important;color:#fff!important;border-color:#d22565!important}
+.nk-day.is-next-weekend.is-selected .nk-day-dots i{background:#fff!important}
+.nk-day.is-today{outline:2px solid #ed3e79;outline-offset:-2px;font-weight:900}
+.nk-day.is-outside{opacity:.5}
+.nk-day[disabled]:not(.is-today){cursor:default}
+.nk-day.has-meal:after{display:none!important}
+.nk-calendar-context{display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap;color:#60718a;font-size:11px}
+.nk-nearest-label{color:#c02a68;font-weight:800;white-space:nowrap}
+.nk-slot-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.nk-slot-top .nk-slot-name{margin-bottom:0}
+.nk-cancel-meal{display:inline-flex;align-items:center;gap:3px;background:#fff3f7;border:1px solid #f5d3e0;border-radius:999px;color:#bd2f65;font:800 11px 'DM Sans',Arial,sans-serif;min-height:29px;padding:4px 10px;cursor:pointer;white-space:nowrap}
+.nk-cancel-meal:hover{background:#ffe2ed;border-color:#f39fc1}
+.nk-cancel-meal:focus-visible,.nk-restore-meal:focus-visible{outline:3px solid #8baee7;outline-offset:2px}
+.nk-restore-row{grid-column:1/-1;border:1px dashed #c8d9ed;border-radius:12px;background:#f8fbff;padding:11px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.nk-restore-row small{color:#61738b;font-weight:700;font-size:11px;margin-right:3px}
+.nk-restore-meal{border:1px solid #cbdef5;background:#fff;color:#205da5;border-radius:999px;padding:7px 10px;font:700 11px 'DM Sans',Arial,sans-serif;cursor:pointer}
+.nk-restore-meal:hover{background:#e8f2ff}
+@media(max-width:650px){
+ #nk-add-dialog{width:calc(100vw - 14px);max-width:550px}
+ #nk-add-dialog .nk-dialog-head{padding:11px 14px 7px}
+ #nk-add-dialog .nk-dialog-head h2{font-size:21px}
+ #nk-add-dialog .nk-dialog-content{padding:8px 13px 11px}
+ #nk-add-dialog .nk-meals span{font-size:11px;padding:7px 2px}
+ #nk-add-dialog .nk-calendar-toolbar{margin:3px 0 6px}
+ #nk-add-dialog .nk-day{min-height:37px;height:37px}
+ #nk-add-dialog .nk-dialog-info{font-size:11px}
+ #nk-add-dialog .nk-calendar-context{font-size:10px}
+}
+@media(max-height:690px){
+ #nk-add-dialog .nk-dialog-head{padding-top:9px;padding-bottom:7px}
+ #nk-add-dialog .nk-dialog-head h2{font-size:20px}
+ #nk-add-dialog .nk-dialog-content{padding-top:6px;padding-bottom:8px}
+ #nk-add-dialog .nk-recipe-selected{min-height:36px;padding:2px 6px;margin-bottom:3px}
+ #nk-add-dialog .nk-recipe-selected img{height:33px;width:47px}
+ #nk-add-dialog .nk-field-title{margin:5px 0 3px}
+ #nk-add-dialog .nk-meals span{min-height:31px;padding:6px 2px}
+ #nk-add-dialog .nk-calendar-toolbar{margin:2px 0 4px}
+ #nk-add-dialog .nk-day{min-height:32px;height:32px}
+ #nk-add-dialog .nk-weekday{padding:2px 0}
+ #nk-add-dialog .nk-calendar-context{margin:4px 0 0}
+ #nk-add-dialog .nk-dialog-info{margin:3px 0 5px}
+ #nk-add-dialog .nk-dialog-submit{min-height:34px;padding:7px}
+ #nk-add-dialog .nk-footnote{margin-top:4px}
+}
+/* Skrajnie niski viewport: dostępność ważniejsza niż ucięcie formularza. */
+@media(max-height:485px){#nk-add-dialog{overflow-y:auto}}
