@@ -53,7 +53,54 @@ jobs:
             const got=f.getFullYear()+'-'+String(f.getMonth()+1).padStart(2,'0')+'-'+String(f.getDate()).padStart(2,'0');
             assert.equal(got,expected,'Date '+date);
           }
-          console.log('Testy dat i katalogu 13 przepisów OK');
+
+          // Odrębny test przechowywania planu, liczby kropek i anulowanych posiłków.
+          const db = new Map();
+          const localStorage = {
+            getItem: k => db.has(k) ? db.get(k) : null,
+            setItem: (k,v) => db.set(k,String(v)),
+            removeItem: k => db.delete(k)
+          };
+          const window2 = { addEventListener: () => {} };
+          const document2 = { readyState: 'loading', addEventListener: () => {} };
+          const ctx2 = { window:window2, document:document2, console, localStorage, confirm:()=>true, alert:()=>{} };
+          vm.createContext(ctx2);
+          vm.runInContext(fs.readFileSync('weekend-catalog.js', 'utf8'),ctx2);
+          vm.runInContext(fs.readFileSync('weekend-planner.js', 'utf8'),ctx2);
+          const planner=window2.NKWeekend;
+          const day = new Date(2026,9,30,12);
+          assert.equal(planner.mealCount(day),0);
+          const combos = [
+            ['jajecznica-z-boczkiem','sniadanie'],
+            ['makaron-z-pesto','obiad'],
+            ['zeberka-w-miodzie','kolacja']
+          ];
+          for(let i=0;i<combos.length;i++){
+            assert.equal(planner.saveRecipe(combos[i][0], day, combos[i][1]), true);
+            assert.equal(planner.mealCount(day), i+1);
+            const cal=planner.calendarHtml(new Date(2026,9,1,12),day,true);
+            const match=cal.match(/data-nk-date="2026-10-30"[^>]*>([\s\S]*?)<\/button>/);
+            assert.ok(match, 'missing planned day');
+            assert.equal((match[1].match(/<i><\/i>/g)||[]).length,i+1,'dots for '+(i+1)+' meals');
+          }
+          assert.equal(planner.cancelMeal(day,'obiad'),true);
+          assert.equal(planner.isSkipped(day,'obiad'),true);
+          assert.equal(planner.mealCount(day),2);
+          assert.equal(planner.restoreMeal(day,'obiad'),true);
+          assert.equal(planner.isSkipped(day,'obiad'),false);
+          assert.equal(planner.mealCount(day),2); // restore slot, not canceled dish
+          assert.equal(planner.saveRecipe('makaron-z-pesto',day,'obiad'),true);
+          assert.equal(planner.mealCount(day),3);
+          assert.equal(planner.cancelMeal(day,'sniadanie'),true);
+          assert.equal(planner.saveRecipe('jajecznica-z-boczkiem',day,'sniadanie'),true);
+          assert.equal(planner.isSkipped(day,'sniadanie'),false); // planning reopens hidden slot
+          const next=planner.friday(new Date());
+          const nextISO = next.getFullYear()+'-'+String(next.getMonth()+1).padStart(2,'0')+'-'+String(next.getDate()).padStart(2,'0');
+          const nextMonth=planner.calendarHtml(new Date(next.getFullYear(),next.getMonth(),1),next,true);
+          const highlight=nextMonth.match(new RegExp('<button[^>]*class="([^"]*)"[^>]*data-nk-date="'+nextISO+'"'));
+          assert.ok(highlight&&highlight[1].includes('is-next-weekend'), 'nearest weekend should be pink');
+          assert.ok(nextMonth.includes('is-today'), 'current date should be indicated when visible');
+          console.log('Testy weekendów, trzech kropek i anulowania/przywracania posiłków OK');
           NODE
       - name: Sprawdź integrację we wszystkich podstronach
         run: |
