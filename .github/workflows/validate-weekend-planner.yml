@@ -154,5 +154,8 @@ jobs:
           assert 'src="schabowy-z-pieczarkami-glowne.webp"' in new
           assert 'src="schabowy-z-pieczarkami-glowne.webp"' in homepage
           assert Path('schabowy-z-pieczarkami-glowne.webp').is_file(), 'Missing generated food photograph'
+          photo=Path('schabowy-z-pieczarkami-glowne.webp').read_bytes()
+          assert len(photo)>30000, 'Photograph too small'
+          assert photo[:4]==b'RIFF' and photo[8:12]==b'WEBP', 'Invalid WebP image'
           print(f'Wszystkie {len(pages)} stron zintegrowane, schabowy z duszonymi pieczarkami OK.')
           PY
