@@ -1,0 +1,91 @@
+name: "Nasza Kuchnia — powiadomienie o Menu weekendowym"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/send-weekend-announcement-20261028.yml"]
+permissions:
+  contents: read
+jobs:
+  send:
+    if: github.event_name == 'push' && github.event.head_commit.message == 'Jednorazowa wysyłka: nowe Menu weekendowe'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      EMAIL_FROM: naszakuchnia.am@gmail.com
+      EMAIL_PASSWORD: ${{ secrets.NASZA_KUCHNIA_SMTP_APP_PASSWORD }}
+      EMAIL_RECIPIENTS: ${{ secrets.NASZA_KUCHNIA_NOTIFY_TO }}
+    steps:
+      - name: Sprawdź podstronę i wyślij wiadomość SMTP do dwojga odbiorców
+        run: |
+          python3 - <<'PY'
+          import os,re,time,smtplib
+          from email.message import EmailMessage
+          from email.utils import formataddr
+          from urllib.request import Request,urlopen
+
+          user=os.environ.get('EMAIL_FROM','').strip()
+          password=os.environ.get('EMAIL_PASSWORD','').strip()
+          recipients=list(dict.fromkeys(x.strip() for x in re.split(r'[,;\n]+',os.environ.get('EMAIL_RECIPIENTS','')) if x.strip()))
+          if not user or not password or len(recipients)!=2 or any(not re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+',x) for x in recipients):
+              raise SystemExit("Błąd konfiguracji SMTP lub liczby odbiorców: nie wysłano wiadomości.")
+
+          url='https://naszakuchnia.pages.dev/menu-weekendowe.html'
+          for i in range(4):
+              try:
+                  req=Request(url+'?announcement=20261028',headers={'User-Agent':'Mozilla/5.0','Cache-Control':'no-cache'})
+                  with urlopen(req,timeout=15) as resp: page=resp.read(200000).decode('utf-8','replace')
+                  if 'data-nk-page="calendar"' in page:
+                      print("Potwierdzono publiczną dostępność Menu weekendowego.",flush=True)
+                      break
+              except Exception as error:
+                  print("Weryfikacja dostępności: "+type(error).__name__,flush=True)
+              if i==3: raise SystemExit("Nie potwierdzono dostępności strony — wiadomości nie wysłano.")
+              time.sleep(10)
+
+          title='💗💙 Nowość w Naszej Kuchni! Menu weekendowe 🍽️'
+          entries=[
+              ('📅','Kalendarz weekendowy','Wybieramy weekend i sprawdzamy, które dni mają już zaplanowane posiłki.'),
+              ('🍳','Śniadania, obiady i kolacje','Planujemy dania na piątek, sobotę i niedzielę.'),
+              ('💙','Dodawanie jednym kliknięciem','Przy każdym przepisie znajdziemy przycisk „Dodaj do listy”.'),
+              ('✏️','Swobodne zmiany','Możemy zmieniać, anulować i ponownie planować posiłki.'),
+              ('🛒','Automatyczna lista zakupów','Wszystkie składniki na cały weekend; listę możemy odhaczać, kopiować i drukować na A4.'),
+          ]
+          intro="Cześć! 💗💙\n\nNasza Kuchnia zyskała nową funkcję — MENU WEEKENDOWE! 🎉\n\nOd teraz możemy planować wspólne posiłki na weekend i tworzyć listy zakupów na podstawie naszych ulubionych przepisów.\n\nCo nowego?\n\n"
+          plain=intro+'\n'.join(icon+' '+head+' — '+body for icon,head,body in entries)
+          plain+='\n\nMniej planowania w głowie, więcej przyjemności ze wspólnego gotowania! 🥰\n\n💙 OTWÓRZ MENU WEEKENDOWE\n'+url+'\n\nNa razie plany zapisują się lokalnie w przeglądarce. Synchronizacja między urządzeniami będzie możliwa w przyszłości.\n\nNasza Kuchnia — Agnieszka ♥ Michał\nBo najlepsze smaki powstają z miłości. 💗'
+          rows=''.join('<tr><td style="padding:10px 0;border-bottom:1px solid #f1e8ef;color:#304861;font-size:14px;line-height:1.55;">'+icon+' <strong>'+head+'</strong> — '+body+'</td></tr>' for icon,head,body in entries)
+          body='''<!doctype html><html lang="pl"><head><meta charset="utf-8"></head><body style="margin:0;background:#f7f6fa;font-family:Arial,Helvetica,sans-serif;color:#152b49;">
+          <table width="100%" role="presentation" cellpadding="0" cellspacing="0" style="background:#f7f6fa"><tr><td align="center" style="padding:24px 10px">
+          <table width="100%" role="presentation" cellpadding="0" cellspacing="0" style="max-width:600px;background:#fff;border:1px solid #f0dce7;border-radius:18px">
+          <tr><td style="text-align:center;padding:25px;background:#fff0f6;border-bottom:1px solid #f2dfeb">
+          <div style="font:italic bold 29px Georgia,serif;color:#183353">Agnieszka <span style="color:#ec3f7c">♥</span> Michał</div>
+          <div style="letter-spacing:4px;font-size:10px;font-weight:bold;color:#66758b;margin-top:5px">NASZA KUCHNIA</div></td></tr>
+          <tr><td style="padding:27px 30px">
+          <p style="font-size:16px;margin:0 0 14px">Cześć! 💗💙</p>
+          <h1 style="font:bold 27px/1.2 Georgia,serif;color:#152d4d;margin:0 0 15px">Nowość: <span style="color:#ed3e79">Menu weekendowe!</span> 🎉</h1>
+          <p style="color:#53657c;font-size:15px;line-height:1.6">Od teraz możemy planować wspólne posiłki na weekend i tworzyć listy zakupów na podstawie naszych ulubionych przepisów.</p>
+          <h2 style="font-size:16px;margin:20px 0 9px;color:#152d4d">Co nowego?</h2>
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0">__ROWS__</table>
+          <p style="text-align:center;font-weight:bold;font-size:15px;line-height:1.6;margin:24px 0">Mniej planowania w głowie, więcej przyjemności ze wspólnego gotowania! 🥰</p>
+          <table role="presentation" align="center" cellspacing="0" cellpadding="0"><tr><td bgcolor="#245eac" style="border-radius:26px;background:#245eac">
+          <a href="__URL__" style="display:inline-block;padding:16px 25px;color:#fff;text-decoration:none;font-weight:bold;font-size:14px">💙 OTWÓRZ MENU WEEKENDOWE</a>
+          </td></tr></table>
+          <p style="color:#78879b;font-size:12px;line-height:1.6;margin:23px 0 0">Na razie plany zapisują się lokalnie w przeglądarce. Synchronizacja między urządzeniami będzie możliwa w przyszłości.</p>
+          </td></tr><tr><td style="padding:19px;text-align:center;background:#fff4f8;border-top:1px solid #f2dfeb">
+          <div style="font:18px Georgia,serif;color:#183353">Nasza Kuchnia — Agnieszka <span style="color:#ed3e79">♥</span> Michał</div>
+          <div style="color:#95657f;font-size:12px;font-style:italic;margin-top:7px">Bo najlepsze smaki powstają z miłości. 💗</div>
+          </td></tr></table></td></tr></table></body></html>'''.replace('__ROWS__',rows).replace('__URL__',url)
+          with smtplib.SMTP_SSL('smtp.gmail.com',465,timeout=30) as client:
+              client.login(user,password)
+              for n,address in enumerate(recipients,1):
+                  msg=EmailMessage()
+                  msg['Subject']=title
+                  msg['From']=formataddr(('Nasza Kuchnia | Agnieszka i Michał',user))
+                  msg['To']=address
+                  msg.set_content(plain)
+                  msg.add_alternative(body,subtype='html')
+                  errors=client.send_message(msg,from_addr=user,to_addrs=[address])
+                  if errors: raise RuntimeError('SMTP odrzucił wiadomość '+str(n))
+                  print(f"SMTP zaakceptował wiadomość {n}/2",flush=True)
+          print("SUKCES: obie wiadomości przekazano serwerowi SMTP.",flush=True)
+          PY
