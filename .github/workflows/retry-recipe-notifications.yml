@@ -1,0 +1,50 @@
+name: "Nasza Kuchnia — ponawianie powiadomień o przepisach"
+
+# Cloudflare Pages może zakończyć publikację po uruchomieniu akcji wysyłającej e-mail.
+# Ta akcja ponawia TYLKO nieudane wysyłki nowych przepisów; sukcesy nie są ruszane.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: nasza-kuchnia-powiadomienia-retry
+  cancel-in-progress: false
+
+jobs:
+  retry_failed_notifications:
+    name: Ponów nieudane powiadomienia
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Wyszukaj nieudane powiadomienia i uruchom je ponownie
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cutoff="$(date -u -d '14 days ago' '+%Y-%m-%dT%H:%M:%SZ')"
+          # Pytamy jedynie o oryginalne zdarzenia push; ręczne testy są wykluczone.
+          runs="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/workflows/notify-new-recipe.yml/runs?event=push&per_page=100")"
+          mapfile -t failed_ids < <(
+            jq -r --arg cutoff "$cutoff" '
+              .workflow_runs[]
+              | select(.conclusion == "failure")
+              | select(.created_at >= $cutoff)
+              | select(.run_attempt < 24)
+              | .id
+            ' <<<"$runs"
+          )
+          if (( ${#failed_ids[@]} == 0 )); then
+            echo "Brak nieudanych powiadomień do ponowienia."
+            exit 0
+          fi
+          for run_id in "${failed_ids[@]}"; do
+            echo "Ponawiam nieudane powiadomienie: run #${run_id}"
+            gh api -X POST "/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/rerun-failed-jobs" >/dev/null
+          done
+          echo "Ponowiono ${#failed_ids[@]} nieudanych zadań."
