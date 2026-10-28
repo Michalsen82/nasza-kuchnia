@@ -74,7 +74,7 @@ if(a.nextElementSibling&&a.nextElementSibling.classList.contains("weekend-add-bu
 var parent=a.closest(".family-copy,.featured-info,.side-recipe");if(!parent)return;
 var url=a.getAttribute("href")||"";var id=url.split("/").pop().replace(/\.html$/,"");if(!recipeMap[id])return;
 var b=document.createElement("button");b.className="weekend-add-button";b.type="button";b.textContent="＋ Dodaj do listy";b.addEventListener("click",function(){openAdd(id);});
-a.insertAdjacentElement("afterend",b);
+var actions=document.createElement("div");actions.className="nk-card-actions";a.parentNode.insertBefore(actions,a);actions.appendChild(a);actions.appendChild(b);
 });
 var recipeSection=document.querySelector(".recipe-view.family-recipe");if(recipeSection){var id=window.location.pathname.split("/").pop().replace(/\.html$/,"");if(recipeMap[id]){var nav=recipeSection.querySelector(".family-nav");if(nav&&!nav.querySelector(".weekend-add-button")){
 var a=Array.from(nav.querySelectorAll("a")).find(function(n){return /krok po kroku/i.test(n.textContent);});
